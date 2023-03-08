@@ -69,7 +69,7 @@ impl Customizer {
         fs::write(
             &test_dart_path,
             fs::read_to_string(&test_dart_path)?
-                .replace("flutter_basic_quickstart", &project_name.to_pascal_case())
+                .replace("flutter_basic_quickstart", &project_name.to_snake_case())
                 .replace("FlutterBasicQuickstart", &project_name.to_pascal_case()),
         )?;
 
