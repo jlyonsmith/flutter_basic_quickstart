@@ -11,7 +11,7 @@ List<GoRoute> get $appRoutes => [
     ];
 
 GoRoute get $mainScreenRoute => GoRouteData.$route(
-      path: '/wsf-routes',
+      path: '/main',
       factory: $MainScreenRouteExtension._fromState,
     );
 
@@ -20,7 +20,7 @@ extension $MainScreenRouteExtension on MainScreenRoute {
       const MainScreenRoute();
 
   String get location => GoRouteData.$location(
-        '/wsf-routes',
+        '/main',
       );
 
   void go(BuildContext context) => context.go(location);
