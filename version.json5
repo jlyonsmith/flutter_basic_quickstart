@@ -1,0 +1,91 @@
+{
+  vars: {
+    major: 1,
+    minor: 0,
+    patch: 0,
+    build: 2,
+    revision: 1,
+    tz: "America/Los_Angeles",
+    company: "{{company}}",
+    product: "Flutter Basic Quickstart",
+    copyright: "© 2023, company",
+    bundleId: "{{bundleId}}",
+    buildType: "prod",
+  },
+  calcVars: {
+    nextBuild: "build + 1",
+  },
+  operations: {
+    incrMajor: "major += 1; minor = 0; patch = 0; revision = 0; build = nextBuild",
+    incrMinor: "minor += 1; patch = 0; revision = 0; build = nextBuild",
+    incrPatch: "patch += 1; revision = 0; build = nextBuild",
+    incrBuild: "revision = 0; build = nextBuild",
+    incrRevision: "revision += 1; build = nextBuild",
+    switchToBeta: 'buildType = "beta"',
+    switchToProd: 'buildType = "prod"',
+  },
+  targets: [
+    {
+      description: "Flutter Pubspec",
+      files: ["pubspec.yaml"],
+      updates: [
+        {
+          search: "(?P<begin>version: *)[0-9]+\\.[0-9]+\\.[0-9]+\\+[0-9]+\\.[0-9]+",
+          replace: 'begin + str::from(major) + "." + str::from(minor) + "." + str::from(patch) + "+" + str::from(build) + "." + str::from(revision)',
+        },
+      ],
+    },
+    {
+      description: "XCode project file",
+      files: ["ios/Runner.xcodeproj/project.pbxproj"],
+      updates: [
+        {
+          search: "(?P<begin>PRODUCT_BUNDLE_IDENTIFIER *= *)[^;]*(?P<end>;)$",
+          replace: 'begin + bundleId + if(buildType == "test", "-test", "") + end',
+        },
+        {
+          search: "(?P<begin>ASSETCATALOG_COMPILER_APPICON_NAME *= *)[^;]*(?P<end>;)$",
+          replace: 'begin + "AppIcon" + if(buildType == "beta", "-Beta", "") + end',
+        },
+      ],
+    },
+    {
+      description: "XCode Info PList",
+      files: ["ios/Flutter/AppFrameworkInfo.plist"],
+      updates: [
+        {
+          search: "(?P<begin>CFBundleShortVersionString</key>\n[\t ]*<string>)([0-9]+\\.[0-9]+.[0-9]+)(?P<end></string>)",
+          replace: 'begin + str::from(major) + "." + str::from(minor) + "." + str::from(patch) + end',
+        },
+        {
+          search: "(?P<begin>CFBundleVersion</key>\n[\t ]*<string>)([0-9]+\\.[0-9]+)(?P<end></string>)",
+          replace: 'begin + str::from(build) + "." + str::from(revision) + end',
+        },
+      ],
+    },
+    {
+      description: "Dart version header",
+      files: ["lib/constants/version.dart"],
+      updates: [
+        {
+          search: "(?P<begin>majorMinorPatch *= *')[0-9]+\\.[0-9]+\\.[0-9]+(?P<end>';)",
+          replace: 'begin + str::from(major) + "." + str::from(minor) + "." + str::from(patch) + end',
+        },
+        {
+          search: "(?P<begin>buildRevision *= *')[0-9]+\\.[0-9]+(?P<end>';)",
+          replace: 'begin + str::from(build) + "." +str::from(revision) + end',
+        },
+      ],
+    },
+    {
+      description: "Git tag name",
+      files: ["scratch/version.tag.txt"],
+      write: 'str::from(major) + "." + str::from(minor) + "." + str::from(patch)',
+    },
+    {
+      description: "Git tag description",
+      files: ["scratch/version.desc.txt"],
+      write: '"Version" + str::from(major) + "." + str::from(minor) + "." + str::from(patch) + "+" + str::from(build) + "." + str::from(revision)',
+    },
+  ],
+}
