@@ -11,6 +11,7 @@
 
 use colored::*;
 use dialoguer::{Confirm, Input};
+use duct::cmd;
 use handlebars::Handlebars;
 use inflector::Inflector;
 use map_macro::map;
@@ -68,7 +69,7 @@ impl Customizer {
         fs::write(
             &test_dart_path,
             fs::read_to_string(&test_dart_path)?
-                .replace("FlutterBasicQuickstart", &project_name.to_pascal_case()),
+                .replace("RustCliQuickStart", &project_name.to_pascal_case()),
         )?;
 
         let description = Input::<String>::new()
@@ -105,7 +106,7 @@ impl Customizer {
             cmd!("git", "commit", "-m", "'Initial commit'").run()?;
         }
 
-        self.info("Customization complete");
+        Self::info("Customization complete");
 
         Ok(())
     }
