@@ -52,6 +52,7 @@ impl Customizer {
         let read_me_path = "README.md";
         let main_dart_path = "lib/main.dart";
         let test_dart_path = "test/widget_test.dart";
+        let version_json5_path = "version.json5";
 
         fs::write(
             &pubspec_yaml_path,
@@ -76,6 +77,12 @@ impl Customizer {
         let description = Input::<String>::new()
             .with_prompt("Enter the description for the project")
             .interact_text()?;
+        let company = Input::<String>::new()
+            .with_prompt("What is the company name")
+            .interact_text()?;
+        let bundle_id = Input::<String>::new()
+            .with_prompt("What will the iOS bundle ID be")
+            .interact_text()?;
 
         let handlebars = Handlebars::new();
 
@@ -90,6 +97,17 @@ impl Customizer {
             )?,
         )?;
 
+        fs::write(
+            &version_json5_path,
+            &handlebars.render_template(
+                &fs::read_to_string(&version_json5_path)?,
+                &map! {
+                    "bundleId" => &bundle_id,
+                    "company" => &company,
+                },
+            )?,
+        )?;
+
         if Confirm::new()
             .with_prompt("Delete customization scripts?")
             .interact()?
@@ -97,10 +115,20 @@ impl Customizer {
             fs::remove_file("customize.rs")?;
         }
 
-        if Confirm::new()
+        let reinitialize_repo = Confirm::new()
             .with_prompt("Reinitialize Git repo?")
-            .interact()?
-        {
+            .interact()?;
+
+        Self::info("Updating version information");
+        cmd!("stampver", "-u", "incrBuild").run()?;
+
+        Self::info("Downloading public packages");
+        cmd!("flutter", "pub", "get").run()?;
+
+        Self::info("Generating all build files");
+        cmd!("just", "generate").run()?;
+
+        if reinitialize_repo {
             fs::remove_dir_all(".git")?;
             cmd!("git", "init").run()?;
             cmd!("git", "add", "-A", ":/").run()?;
