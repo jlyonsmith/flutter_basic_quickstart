@@ -48,7 +48,7 @@ impl Customizer {
         let project_name_snake = project_name.to_snake_case();
         let project_name_pascal = project_name.to_pascal_case();
         let project_name_title = project_name.to_title_case();
-        let pubspec_yaml_path = "Cargo.toml";
+        let pubspec_yaml_path = "pubspec.yaml";
         let read_me_path = "README.md";
         let main_dart_path = "lib/main.dart";
         let test_dart_path = "test/widget_test.dart";
@@ -69,7 +69,8 @@ impl Customizer {
         fs::write(
             &test_dart_path,
             fs::read_to_string(&test_dart_path)?
-                .replace("RustCliQuickStart", &project_name.to_pascal_case()),
+                .replace("flutter_basic_quickstart", &project_name.to_pascal_case())
+                .replace("FlutterBasicQuickstart", &project_name.to_pascal_case()),
         )?;
 
         let description = Input::<String>::new()
@@ -93,14 +94,14 @@ impl Customizer {
             .with_prompt("Delete customization scripts?")
             .interact()?
         {
-            fs::remove_file("customize.rs");
+            fs::remove_file("customize.rs")?;
         }
 
         if Confirm::new()
             .with_prompt("Reinitialize Git repo?")
             .interact()?
         {
-            fs::remove_dir_all(".git");
+            fs::remove_dir_all(".git")?;
             cmd!("git", "init").run()?;
             cmd!("git", "add", "-A", ":/").run()?;
             cmd!("git", "commit", "-m", "'Initial commit'").run()?;
