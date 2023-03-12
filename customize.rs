@@ -45,6 +45,9 @@ impl Customizer {
     }
 
     fn run(&self, project_name: &str) -> Result<(), Box<dyn Error>> {
+        let old_project_name_snake = "flutter_basic_quickstart";
+        let old_project_name_title = "Flutter Basic Quickstart";
+        let old_project_name_pascal = "FlutterBasicQuickstart";
         let project_name_snake = project_name.to_snake_case();
         let project_name_pascal = project_name.to_pascal_case();
         let project_name_title = project_name.to_title_case();
@@ -53,25 +56,33 @@ impl Customizer {
         let main_dart_path = "lib/main.dart";
         let test_dart_path = "test/widget_test.dart";
         let version_json5_path = "version.json5";
+        let info_plist_path = "ios/Runner/Info.plist";
 
         fs::write(
             &pubspec_yaml_path,
             fs::read_to_string(&pubspec_yaml_path)?
-                .replace("flutter_basic_quickstart", &project_name_snake)
-                .replace("FlutterBasicQuickstart", &project_name_pascal),
+                .replace(&old_project_name_snake, &project_name_snake)
+                .replace(&old_project_name_title, &project_name_title),
         )?;
 
         fs::write(
             &main_dart_path,
             fs::read_to_string(&main_dart_path)?
-                .replace("FlutterBasicQuickstart", &project_name.to_pascal_case()),
+                .replace(&old_project_name_pascal, &project_name_snake),
         )?;
 
         fs::write(
             &test_dart_path,
             fs::read_to_string(&test_dart_path)?
-                .replace("flutter_basic_quickstart", &project_name.to_snake_case())
-                .replace("FlutterBasicQuickstart", &project_name.to_pascal_case()),
+                .replace(&old_project_name_snake, &project_name_snake)
+                .replace(&old_project_name_pascal, &project_name_pascal),
+        )?;
+
+        fs::write(
+            &info_plist_path,
+            fs::read_to_string(&info_plist_path)?
+                .replace(&old_project_name_snake, &project_name_snake)
+                .replace(&old_project_name_title, &project_name_title),
         )?;
 
         let description = Input::<String>::new()

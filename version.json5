@@ -50,20 +50,6 @@
       ],
     },
     {
-      description: "XCode Info PList",
-      files: ["ios/Flutter/AppFrameworkInfo.plist"],
-      updates: [
-        {
-          search: "(?P<begin>CFBundleShortVersionString</key>\n[\t ]*<string>)([0-9]+\\.[0-9]+.[0-9]+)(?P<end></string>)",
-          replace: 'begin + str::from(major) + "." + str::from(minor) + "." + str::from(patch) + end',
-        },
-        {
-          search: "(?P<begin>CFBundleVersion</key>\n[\t ]*<string>)([0-9]+\\.[0-9]+)(?P<end></string>)",
-          replace: 'begin + str::from(build) + "." + str::from(revision) + end',
-        },
-      ],
-    },
-    {
       description: "Dart version header",
       files: ["lib/constants/version.dart"],
       updates: [
