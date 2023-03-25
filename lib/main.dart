@@ -17,7 +17,7 @@ class FlutterBasicQuickstartApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Flutter Quickstart App',
+      title: 'Flutter Basic Quickstart',
       theme: _buildTheme(Brightness.dark),
       routerConfig: GoRouter(
           routes: $appRoutes,
