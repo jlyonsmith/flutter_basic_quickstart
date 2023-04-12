@@ -141,7 +141,9 @@ impl Customizer {
                 .ok_or(String::from("bad path"))?,
         )?;
         fs::rename(&old_main_activity_kt_path, &main_activity_kt_path)?;
-        fs::remove_dir_all("android/app/src/main/kotlin/com")?;
+
+        // TODO(john): Clean-up better need to check for empty directory
+        // fs::remove_dir_all("android/app/src/main/kotlin/com")?;
 
         fs::write(
             &main_activity_kt_path,
