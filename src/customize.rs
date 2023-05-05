@@ -1,41 +1,41 @@
 #!/usr/bin/env rust-script
 //! ```cargo
 //! [dependencies]
-//! colored = "2.0.0"
+//! yansi = "0.5.1"
 //! dialoguer = "0.10.3"
 //! duct = "0.13.6"
 //! handlebars = "4.3.6"
-//! map-macro = "0.2.5"
+//! map-macro = "0.2.6"
 //! str_inflector = "0.12.0"
 //! ```
 
-use colored::*;
 use dialoguer::{Confirm, Input};
 use duct::cmd;
 use handlebars::Handlebars;
 use inflector::Inflector;
-use map_macro::map;
+use map_macro::hash_map;
 use std::{env, error::Error, fs, path::PathBuf, process::ExitCode};
+use yansi::Paint;
 
 trait Logger {
-    fn info(s: &str);
-    fn error(s: &str);
-    fn warning(s: &str);
+    fn info<T: AsRef<str>>(s: T);
+    fn error<T: AsRef<str>>(s: T);
+    fn warning<T: AsRef<str>>(s: T);
 }
 
 struct Customizer {}
 
 impl Logger for Customizer {
-    fn info(s: &str) {
-        println!("👉 {}", s);
+    fn info<T: AsRef<str>>(s: T) {
+        println!("👉 {}", s.as_ref());
     }
 
-    fn error(s: &str) {
-        eprintln!("💥 {}", s.red());
+    fn error<T: AsRef<str>>(s: T) {
+        eprintln!("💥 {}", Paint::red(s.as_ref()));
     }
 
-    fn warning(s: &str) {
-        eprintln!("🐓 {}", s.yellow());
+    fn warning<T: AsRef<str>>(s: T) {
+        eprintln!("🐓 {}", Paint::yellow(s.as_ref()));
     }
 }
 
@@ -48,7 +48,8 @@ impl Customizer {
         let old_project_name_snake = "flutter_basic_quickstart";
         let old_project_name_title = "Flutter Basic Quickstart";
         let old_project_name_pascal = "FlutterBasicQuickstart";
-        let old_bundle_id = "com.example.flutter_basic_quickstart";
+        let old_bundle_id = "com.example.flutter-basic-quickstart";
+        let old_application_id = "com.example.flutter_basic_quickstart";
         let old_main_activity_kt_path = PathBuf::from(
             "android/app/src/main/kotlin/com/example/flutter_basic_quickstart/MainActivity.kt",
         );
@@ -76,7 +77,7 @@ impl Customizer {
         let cmakelists_text_2_path = "windows/CMakeLists.txt";
         let runner_rc_path = "windows/runner/Runner.rc";
         let main_cpp_path = "windows/runner/Main.cpp";
-        let old_company = "com.example";
+        let old_company = "ExampleCompany";
         let handlebars = Handlebars::new();
 
         let description = Input::<String>::new()
@@ -89,7 +90,12 @@ impl Customizer {
             .with_prompt("What will the bundle ID be")
             .interact_text()?;
 
-        bundle_id = bundle_id.replace("-", "_");
+        bundle_id = bundle_id.replace("_", "-");
+
+        let application_id = bundle_id.replace("-", "_");
+
+        Self::info(format!("iOS/macOS Bundle ID is '{}'", bundle_id));
+        Self::info(format!("Android Application ID is '{}'", application_id));
 
         // iOS
 
@@ -110,8 +116,8 @@ impl Customizer {
         fs::write(
             &app_info_xcconfig_path,
             fs::read_to_string(&app_info_xcconfig_path)?
-                .replace(old_company, &company)
                 .replace(old_bundle_id, &bundle_id)
+                .replace(old_company, &company)
                 .replace(old_project_name_snake, &project_name_snake),
         )?;
 
@@ -131,7 +137,7 @@ impl Customizer {
 
         let main_activity_kt_path = PathBuf::from(format!(
             "android/app/src/main/kotlin/{}/MainActivity.kt",
-            bundle_id.split('.').collect::<Vec<&str>>().join("/")
+            application_id.split('.').collect::<Vec<&str>>().join("/")
         ));
 
         // Move the MainActivity.kt file into the right directory
@@ -142,34 +148,40 @@ impl Customizer {
         )?;
         fs::rename(&old_main_activity_kt_path, &main_activity_kt_path)?;
 
-        // TODO(john): Clean-up better need to check for empty directory
-        // fs::remove_dir_all("android/app/src/main/kotlin/com")?;
+        if application_id.starts_with("com.") {
+            fs::remove_dir_all("android/app/src/main/kotlin/com/example")?;
+        } else {
+            fs::remove_dir_all("android/app/src/main/kotlin/com")?;
+        }
 
         fs::write(
             &main_activity_kt_path,
-            fs::read_to_string(&main_activity_kt_path)?.replace(old_bundle_id, &bundle_id),
+            fs::read_to_string(&main_activity_kt_path)?
+                .replace(old_application_id, &application_id),
         )?;
 
         fs::write(
             &build_gradle_path,
-            fs::read_to_string(&build_gradle_path)?.replace(old_bundle_id, &bundle_id),
+            fs::read_to_string(&build_gradle_path)?.replace(old_application_id, &application_id),
         )?;
 
         fs::write(
             &android_manifest_xml_1_path,
-            fs::read_to_string(android_manifest_xml_1_path)?.replace(old_bundle_id, &bundle_id),
+            fs::read_to_string(android_manifest_xml_1_path)?
+                .replace(old_application_id, &application_id),
         )?;
 
         fs::write(
             &android_manifest_xml_2_path,
             fs::read_to_string(android_manifest_xml_2_path)?
-                .replace(old_bundle_id, &bundle_id)
+                .replace(old_application_id, &application_id)
                 .replace(old_project_name_snake, &project_name_snake),
         )?;
 
         fs::write(
             &android_manifest_xml_3_path,
-            fs::read_to_string(android_manifest_xml_3_path)?.replace(old_bundle_id, &bundle_id),
+            fs::read_to_string(android_manifest_xml_3_path)?
+                .replace(old_application_id, &application_id),
         )?;
 
         // Linux
@@ -249,7 +261,7 @@ impl Customizer {
             &read_me_path,
             &handlebars.render_template(
                 &fs::read_to_string(&read_me_path)?,
-                &map! {
+                &hash_map! {
                     "title" => &project_name_title,
                     "description" => &description,
                 },
@@ -260,7 +272,7 @@ impl Customizer {
             &version_json5_path,
             &handlebars.render_template(
                 &fs::read_to_string(&version_json5_path)?,
-                &map! {
+                &hash_map! {
                     "company" => &company,
                 },
             )?,
