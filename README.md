@@ -5,7 +5,7 @@
 ## Features
 
 - [x] Generated from `flutter create`
-- [x] Generates a `beta` flavor for iOS with a beta icon and bundle ID
+- [x] Generates a `beta` flavor for iOS & Android with a beta icon and unique bundle ID/application ID
 - [x] Tweak analysis to prefer relative imports, single quotes, Flutter style TODO's, and allow `print()`
 - [x] Add commonly used directories under `lib`
 - [x] Add `scratch` directory
