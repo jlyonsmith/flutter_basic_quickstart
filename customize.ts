@@ -13,6 +13,7 @@ import {
   Confirm,
 } from "https://deno.land/x/cliffy@v0.25.7/prompt/mod.ts";
 import { Karacho } from "https://deno.land/x/karacho@v1.0.25/main.ts";
+import * as path from "https://deno.land/std@0.184.0/path/mod.ts";
 
 await new Command()
   .name("customize.ts")
@@ -125,7 +126,7 @@ await new Command()
       .join("/")}/MainActivity.kt`;
 
     // Move the MainActivity.kt file into the right directory
-    Deno.mkdirSync(mainActivityKtPath, { recursive: true });
+    Deno.mkdirSync(path.dirname(mainActivityKtPath), { recursive: true });
     Deno.renameSync(oldMainActivityKtPath, mainActivityKtPath);
 
     if (applicationId.startsWith("com.")) {
