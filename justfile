@@ -55,7 +55,7 @@ version OPERATION='incrRevision':
 generate: json svg vec icons splash
 
 # Generate a release build, run tests & tag the build
-release OPERATION='incrPatch':
+release OPERATION='incrPatch' BUNDLE='apk,ipa':
   #!/usr/bin/env fish
   function info
     set_color green; echo "👉 "$argv; set_color normal
@@ -65,6 +65,16 @@ release OPERATION='incrPatch':
   end
   function error
     set_color red; echo "💥 "$argv; set_color normal
+  end
+
+  function rollBackConfig
+    info "Restoring configuration"
+    mv "scratch/app_config_provider.dart" "lib/providers/"
+  end
+
+  function rollbackVersion
+    info "Undoing version changes"
+    git -f checkout $branch .
   end
 
   if test ! -e "pubspec.yaml"
@@ -81,6 +91,7 @@ release OPERATION='incrPatch':
 
   set branch (string trim (git rev-parse --abbrev-ref HEAD 2> /dev/null))
   set name (basename (pwd))
+  set bundles (string split ',' $BUNDLES)
 
   info "Starting release of '"$name"' on branch '"$branch"'"
 
@@ -92,8 +103,13 @@ release OPERATION='incrPatch':
 
   mkdir scratch 2> /dev/null
 
+  info "Saving & swapping in default configuration"
+  mv "lib/providers/app_config_provider.dart" "scratch/"
+  cp "lib/providers/app_config_provider.default.dart" "lib/providers/app_config_provider.dart"
+
   if not stampver {{OPERATION}} -u -i version.json5
     error "Unable to generation version information"
+    rollBackConfig
     exit 1
   end
 
@@ -112,10 +128,32 @@ release OPERATION='incrPatch':
   flutter test
 
   if test $status -ne 0
-    # Rollback
-    git checkout $branch .
-    error "Tests failed '"$name"' on branch '"$branch"'"
+    error "Tests failed"
+    rollbackVersion
+    rollBackConfig
     exit 1
+  end
+
+  if contains ipa $bundles
+    flutter build ipa
+
+    if test $status -ne 0
+      error "IPA build failed"
+      rollbackVersion
+      rollBackConfig
+      exit 1
+    end
+  end
+
+  if contains apk $bundles
+    flutter build apk
+
+    if test $status -ne 0
+      error "APK build failed"
+      rollbackVersion
+      rollBackConfig
+      exit 1
+    end
   end
 
   info "Staging version changes"
@@ -131,6 +169,8 @@ release OPERATION='incrPatch':
 
   info "Pushing to 'origin'"
   git push --follow-tags
+
+  rollBackConfig
 
   info "Finished release of '"$name"\' on branch '"$branch"'. You can publish the app to Apple & Google stores now..."
   exit 0

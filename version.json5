@@ -36,7 +36,7 @@
     },
     {
       description: "Dart version header",
-      files: ["lib/constants/version.dart"],
+      files: ["lib/version.dart"],
       updates: [
         {
           search: "(?P<begin>majorMinorPatch *= *')[0-9]+\\.[0-9]+\\.[0-9]+(?P<end>';)",

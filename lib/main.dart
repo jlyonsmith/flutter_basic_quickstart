@@ -1,27 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
-import './constants/constants.dart';
+import './providers/providers.dart';
 import './routes.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GoogleFonts.config.allowRuntimeFetching = false;
 
-  runApp(const FlutterBasicQuickstartApp());
+  final appPathService = await AppPathService.create();
+
+  runApp(ProviderScope(overrides: [
+    appPathProvider.overrideWithValue(appPathService),
+  ], child: const FlutterBasicQuickstartApp()));
 }
 
-class FlutterBasicQuickstartApp extends StatelessWidget {
+class FlutterBasicQuickstartApp extends ConsumerWidget {
   const FlutterBasicQuickstartApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appConfig = ref.watch(appConfigProvider);
+
     return MaterialApp.router(
       title: 'Flutter Basic Quickstart',
       theme: _buildTheme(Brightness.dark),
       routerConfig: GoRouter(
           routes: $appRoutes,
-          initialLocation: AppConfig.initialLocation,
+          initialLocation: appConfig.initialLocation,
           debugLogDiagnostics: false),
     );
   }
