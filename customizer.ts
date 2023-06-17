@@ -21,7 +21,7 @@ await new Command()
   .arguments("<PROJECTNAME:string>")
   .error((error) => {
     if (error instanceof ValidationError) {
-      console.error(error);
+      console.error(error.message);
       Deno.exit(1);
     }
   })
