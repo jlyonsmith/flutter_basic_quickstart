@@ -45,7 +45,7 @@ splash:
 
 # Show outdated packages
 outdated:
-  flutter pub outdated
+  dart pub outdated
 
 # Update version information
 version OPERATION='incrRevision':
