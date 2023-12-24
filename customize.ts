@@ -38,9 +38,10 @@ await new Command()
     const projectNameSnake = snakeCase(projectName);
     const projectNamePascal = pascalCase(projectName);
     const projectNameTitle = titleCase(projectName);
+    const readMePath = "README.md";
+    const readMeTemplatePath = "README.md.template";
     const justfilePath = "justfile";
     const pubspecYamlPath = "pubspec.yaml";
-    const readMePath = "README.md";
     const mainDartPath = "lib/main.dart";
     const widgetTestDartPath = "test/widget_test.dart";
     const versionJson5Path = "version.json5";
@@ -69,6 +70,7 @@ await new Command()
     );
     const company = await Input.prompt("Enter the company name");
     let bundleId = await Input.prompt("Enter the iOS bundle ID");
+    const alias = await Input.prompt("Enter your GitHub alias");
     const karacho = new Karacho();
 
     bundleId = bundleId.replaceAll("_", "-");
@@ -269,17 +271,21 @@ await new Command()
     );
 
     Deno.writeTextFileSync(
-      readMePath,
-      karacho.compile(Deno.readTextFileSync(readMePath))({
-        title: projectNameTitle,
-        description: description,
-      })
-    );
-
-    Deno.writeTextFileSync(
       versionJson5Path,
       karacho.compile(Deno.readTextFileSync(versionJson5Path))({
         company,
+      })
+    );
+
+    Deno.removeSync(readMePath);
+    Deno.renameSync(readMeTemplatePath, readMePath);
+    Deno.writeTextFileSync(
+      readMePath,
+      karacho.compile(Deno.readTextFileSync(readMePath))({
+        title: projectNameTitle,
+        alias,
+        projectName: projectNameSnake,
+        description,
       })
     );
 
