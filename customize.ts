@@ -38,6 +38,7 @@ await new Command()
     const projectNameSnake = snakeCase(projectName);
     const projectNamePascal = pascalCase(projectName);
     const projectNameTitle = titleCase(projectName);
+    const justfilePath = "justfile";
     const pubspecYamlPath = "pubspec.yaml";
     const readMePath = "README.md";
     const mainDartPath = "lib/main.dart";
@@ -237,6 +238,14 @@ await new Command()
     );
 
     // General
+
+    Deno.writeTextFileSync(
+      justfilePath,
+      Deno.readTextFileSync(justfilePath).replaceAll(
+        oldApplicationId,
+        applicationId
+      )
+    );
 
     Deno.writeTextFileSync(
       pubspecYamlPath,
