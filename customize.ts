@@ -293,7 +293,7 @@ await new Command()
       })
     );
 
-    Deno.mkdirSync(path.dirname(vscodePath));
+    Deno.mkdirSync(vscodePath);
     Deno.renameSync(launchTemplateJsonPath, launchJsonPath);
     Deno.writeTextFileSync(
       launchJsonPath,
