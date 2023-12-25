@@ -38,7 +38,7 @@ runner:
 
 # Generate icons with `icons_launcher`
 icons:
-  dart run icons_launcher:create
+  dart run icons_launcher:create --flavor current
   dart run icons_launcher:create --flavor next
 
 # Generate the splash screens with `flutter_native_splash`
