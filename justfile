@@ -144,7 +144,7 @@ release OPERATION='incrBuild' BUNDLES='apk,ipa':
 
   # If the patch exists already we are doing a new build and we need to delete the old tag so we can move it
   if git rev-parse -q --verify $tagName 2>/dev/null >/dev/null; and test $operation = 'incrBuild'
-    warning "Detected existing tag'"$tagName"' - we will move the old tag to the new build"
+    warning "Detected existing tag '"$tagName"' - we will move the old tag to the new build"
     set deleteExistingTag 1
   end
 
