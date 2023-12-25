@@ -1,5 +1,5 @@
 icons_launcher:
-  image_path: "raw_assets/png/appIconBeta.png"
+  image_path: "raw_assets/png/appIconNext.png"
   platforms:
     android:
       enable: true
