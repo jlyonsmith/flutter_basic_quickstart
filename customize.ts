@@ -44,7 +44,7 @@ await new Command()
     const pubspecYamlPath = "pubspec.yaml";
     const vscodePath = ".vscode";
     const launchJsonPath = ".vscode/launch.json";
-    const launchTemplateJsonPath = "launch.template.json";
+    const launchTemplateJsonPath = "launch.template.json5";
     const mainDartPath = "lib/main.dart";
     const widgetTestDartPath = "test/widget_test.dart";
     const versionJson5Path = "version.json5";
