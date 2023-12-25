@@ -3,25 +3,20 @@
     major: 1,
     minor: 0,
     patch: 0,
-    build: 2,
-    revision: 1,
+    build: 1,
     tz: "America/Los_Angeles",
     company: "{{company}}",
     product: "{{title}}",
-    copyright: "© 2023, {{company}}",
-    buildType: "prod",
+    copyright: "© {{year}}, {{company}}",
   },
   calcVars: {
     nextBuild: "build + 1",
   },
   operations: {
-    incrMajor: "major += 1; minor = 0; patch = 0; revision = 0; build = nextBuild",
-    incrMinor: "minor += 1; patch = 0; revision = 0; build = nextBuild",
-    incrPatch: "patch += 1; revision = 0; build = nextBuild",
-    incrBuild: "revision = 0; build = nextBuild",
-    incrRevision: "revision += 1; build = nextBuild",
-    switchToBeta: 'buildType = "beta"',
-    switchToProd: 'buildType = "prod"',
+    incrMajor: "major += 1; minor = 0; patch = 0; build = nextBuild",
+    incrMinor: "minor += 1; patch = 0; build = nextBuild",
+    incrPatch: "patch += 1; build = nextBuild",
+    incrBuild: "build = nextBuild",
   },
   targets: [
     {
@@ -29,8 +24,22 @@
       files: ["pubspec.yaml"],
       updates: [
         {
-          search: "(?P<begin>version: *)[0-9]+\\.[0-9]+\\.[0-9]+\\+[0-9]+\\.[0-9]+",
-          replace: 'begin + str::from(major) + "." + str::from(minor) + "." + str::from(patch) + "+" + str::from(build) + "." + str::from(revision)',
+          search: "(?P<begin>version: *)[0-9]+\\.[0-9]+\\.[0-9]+\\+[0-9]+",
+          replace: 'begin + str::from(major) + "." + str::from(minor) + "." + str::from(patch) + "+" + str::from(build)',
+        },
+      ],
+    },
+    {
+      description: "XCode Info PList",
+      files: ["ios/Flutter/AppFrameworkInfo.plist"],
+      updates: [
+        {
+          search: "(?P<begin>CFBundleShortVersionString</key>\n[\t ]*<string>)([0-9]+\\.[0-9]+\\.[0-9]+)(?P<end></string>)",
+          replace: 'begin + str::from(major) + "." + str::from(minor) + "." + str::from(patch) + end',
+        },
+        {
+          search: "(?P<begin>CFBundleVersion</key>\n[\t ]*<string>)([0-9]+)(?P<end></string>)",
+          replace: "begin + str::from(build) + end",
         },
       ],
     },
@@ -43,8 +52,8 @@
           replace: 'begin + str::from(major) + "." + str::from(minor) + "." + str::from(patch) + end',
         },
         {
-          search: "(?P<begin>buildRevision *= *')[0-9]+\\.[0-9]+(?P<end>';)",
-          replace: 'begin + str::from(build) + "." +str::from(revision) + end',
+          search: "(?P<begin>build *= *')[0-9]+(?P<end>';)",
+          replace: "begin + str::from(build) + end",
         },
       ],
     },
@@ -56,7 +65,7 @@
     {
       description: "Git tag description",
       files: ["scratch/version.desc.txt"],
-      write: '"Version" + str::from(major) + "." + str::from(minor) + "." + str::from(patch) + "+" + str::from(build) + "." + str::from(revision)',
+      write: '"Version " + str::from(major) + "." + str::from(minor) + "." + str::from(patch) + "+" + str::from(build)',
     },
   ],
 }

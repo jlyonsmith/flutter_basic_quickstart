@@ -61,14 +61,18 @@ android {
         }
     }
 
-    flavorDimensions "default"
+    flavorDimensions "env"
 
     productFlavors {
-        beta {
-            dimension "default"
-            resValue "string", "app_name", "flutter_basic_quickstart beta"
-            applicationIdSuffix ".beta"
-            versionNameSuffix "-beta"
+        current {
+            dimension "env"
+            resValue "string", "app_name", "flutter_basic_quickstart"
+        }
+        next {
+            dimension "env"
+            resValue "string", "app_name", "flutter_basic_quickstart (Next)"
+            applicationIdSuffix ".next"
+            versionNameSuffix "-next"
         }
     }
 }

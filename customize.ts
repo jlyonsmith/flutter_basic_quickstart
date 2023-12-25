@@ -39,9 +39,12 @@ await new Command()
     const projectNamePascal = pascalCase(projectName);
     const projectNameTitle = titleCase(projectName);
     const readMePath = "README.md";
-    const readMeTemplatePath = "README.md.template";
+    const readMeTemplatePath = "README.template.md";
     const justfilePath = "justfile";
     const pubspecYamlPath = "pubspec.yaml";
+    const vscodePath = ".vscode";
+    const launchJsonPath = ".vscode/launch.json";
+    const launchTemplateJsonPath = "launch.template.json";
     const mainDartPath = "lib/main.dart";
     const widgetTestDartPath = "test/widget_test.dart";
     const versionJson5Path = "version.json5";
@@ -274,6 +277,7 @@ await new Command()
       versionJson5Path,
       karacho.compile(Deno.readTextFileSync(versionJson5Path))({
         company,
+        year: new Date().getFullYear().toString(),
       })
     );
 
@@ -286,6 +290,15 @@ await new Command()
         alias,
         projectName: projectNameSnake,
         description,
+      })
+    );
+
+    Deno.mkdirSync(path.dirname(vscodePath));
+    Deno.renameSync(launchTemplateJsonPath, launchJsonPath);
+    Deno.writeTextFileSync(
+      launchJsonPath,
+      karacho.compile(Deno.readTextFileSync(readMePath))({
+        title: projectNameTitle,
       })
     );
 
