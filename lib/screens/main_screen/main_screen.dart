@@ -1,8 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vector_graphics/vector_graphics.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+@RoutePage()
 class MainScreen extends HookWidget {
   const MainScreen({super.key});
 

@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/app_config.dart';
-import '../routes.dart';
 
 // NOTE: This is the default app configuration for release builds!
 
@@ -10,5 +9,5 @@ import '../routes.dart';
 // be overridden in a release build.
 final appConfigProvider = Provider<AppConfig>((ref) => AppConfig(
       // DEBUG: '/wsf-routes?from-terminal-id=3&to-terminal-id=7'
-      initialLocation: const MainScreenRoute().location,
+      initialLocation: '/',
     ));

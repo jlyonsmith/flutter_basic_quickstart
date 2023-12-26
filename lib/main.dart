@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:go_router/go_router.dart';
+import 'package:auto_route/auto_route.dart';
 import './providers/providers.dart';
-import './routes.dart';
+import 'app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,11 +13,13 @@ void main() async {
 
   runApp(ProviderScope(overrides: [
     appPathProvider.overrideWithValue(appPathService),
-  ], child: const FlutterBasicQuickstartApp()));
+  ], child: FlutterBasicQuickstartApp()));
 }
 
 class FlutterBasicQuickstartApp extends ConsumerWidget {
-  const FlutterBasicQuickstartApp({super.key});
+  final appRouter = AppRouter();
+
+  FlutterBasicQuickstartApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,10 +28,11 @@ class FlutterBasicQuickstartApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Flutter Basic Quickstart',
       theme: _buildTheme(Brightness.dark),
-      routerConfig: GoRouter(
-          routes: $appRoutes,
-          initialLocation: appConfig.initialLocation,
-          debugLogDiagnostics: false),
+      routerConfig: appRouter.config(
+        deepLinkBuilder: (deepLink) async {
+          return DeepLink.path(appConfig.initialLocation);
+        },
+      ),
     );
   }
 

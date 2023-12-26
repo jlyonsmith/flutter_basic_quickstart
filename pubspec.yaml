@@ -19,14 +19,15 @@ dependencies:
   go_router: ^13.0.0
   path: ^1.8.3
   path_provider: ^2.0.15
+  auto_route: ^7.8.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.1
-  go_router_builder: ^2.0.1
   build_runner: ^2.3.3
   vector_graphics_compiler: ^1.1.2
+  auto_route_generator: ^7.3.2
 
 flutter_native_splash:
   android: true
