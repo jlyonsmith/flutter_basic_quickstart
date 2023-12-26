@@ -29,7 +29,10 @@ dev_dependencies:
   vector_graphics_compiler: ^1.1.2
 
 flutter_native_splash:
-  background_image: "raw_assets/png/splash.png"
+  android: true
+  ios: true
+  image: "raw_assets/png/appSplash.png"
+  background_image: "raw_assets/png/splashBackground.png"
 
 flutter:
   uses-material-design: true
