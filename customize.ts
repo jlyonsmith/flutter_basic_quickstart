@@ -297,7 +297,7 @@ await new Command()
     Deno.renameSync(launchTemplateJsonPath, launchJsonPath);
     Deno.writeTextFileSync(
       launchJsonPath,
-      karacho.compile(Deno.readTextFileSync(readMePath))({
+      karacho.compile(Deno.readTextFileSync(launchJsonPath))({
         title: projectNameTitle,
       })
     );

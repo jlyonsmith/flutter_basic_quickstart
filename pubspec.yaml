@@ -31,7 +31,7 @@ dev_dependencies:
 flutter_native_splash:
   android: true
   ios: true
-  image: "raw_assets/png/appSplash.png"
+  image: "raw_assets/png/splashImage.png"
   background_image: "raw_assets/png/splashBackground.png"
 
 flutter:
