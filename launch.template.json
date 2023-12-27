@@ -1,0 +1,50 @@
+{
+  "configurations": [
+    {
+      "name": "{{title}} - Next",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "next"]
+    },
+    {
+      "name": "{{title}} - Next (Profile)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "next"]
+    },
+    {
+      "name": "{{title}} - Next (Release)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "next"]
+    },
+    {
+      "name": "{{title}}",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "current"]
+    },
+    {
+      "name": "{{title}} (Profile)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "current"]
+    },
+    {
+      "name": "{{title}} (Release)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "current"]
+    }
+  ]
+}
